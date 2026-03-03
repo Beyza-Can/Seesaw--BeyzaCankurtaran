@@ -17,6 +17,8 @@ let nextWeight = generateNextWeight();
 loadState();
 renderAll();
 updateSeesaw();
+
+//check if mouse is over plank and update mouseX accordingly =>chatgpt
 document.addEventListener("mousemove", (e) => {
 
   const rect = plank.getBoundingClientRect();
@@ -33,6 +35,22 @@ document.addEventListener("mousemove", (e) => {
   }
 
 });
+
+//handle mouse move on plank to add weight at mouseX position
+document.addEventListener("mousemove", (e) => {
+
+});
+
+//handle click on plank to add weight at mouseX position
+plank.addEventListener("click", () => {
+});
+//handle reset button click to clear all weights and reset state
+function createWeightElement(weight, position){
+}
+//calculate total weights, torques and tilt angle, then update the display
+function updateSeesaw(){}
+
+
 function renderAll(){
   plank.querySelectorAll(".weight").forEach(w => w.remove());
   objects.forEach(obj => createWeightElement(obj.weight, obj.position));
