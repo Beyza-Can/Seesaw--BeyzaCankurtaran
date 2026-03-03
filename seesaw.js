@@ -11,7 +11,7 @@ const PLANK_WIDTH = 400;
 const PIVOT = PLANK_WIDTH / 2;
 
 let objects = [];
-let mouseX = null;       // Mouse’un plank içindeki konumu
+let mouseX = null;       
 let nextWeight = generateNextWeight();
 
 loadState();
@@ -33,3 +33,17 @@ document.addEventListener("mousemove", (e) => {
   }
 
 });
+function renderAll(){
+  plank.querySelectorAll(".weight").forEach(w => w.remove());
+  objects.forEach(obj => createWeightElement(obj.weight, obj.position));
+}
+function saveState(){
+  localStorage.setItem("seesawState", JSON.stringify(objects));
+}
+
+function loadState(){
+  const saved = localStorage.getItem("seesawState");
+  if(saved){
+    objects = JSON.parse(saved);
+  }
+}
