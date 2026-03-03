@@ -1,35 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seesaw</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="seesaw">
-        <h1>Seesaw Simulation</h1>
-        <div class="info">
-            <div id="left-weight">
-                <span>Left Weight</span>
-                <span id="left-weight-value">0 kg</span> 
+        <div class="container">
+            <h1>Seesaw Simulation</h1>
+            <div class="info">
+                <div id="left-weight">
+                    <span>Left Weight:</span>
+                    <span id="left-weight-value">0 kg</span>
+                </div>
+                <div id="left-tork">
+                    <span>Left Tork: </span>
+                    <span id="left-tork-value">0</span>
+                </div>
+                <div id="tilt-angle">
+                    <span>Tilt Angle:</span>
+                    <span id="tilt-angle-value">0°</span>
+                </div>
+                <div id="right-weight">
+                    <span>Right Weight:</span>
+                    <span id="right-weight-value">0 kg</span>
+                </div>
+                <div id="right-tork">
+                    <span>Right Tork: </span>
+                    <span id="right-tork-value">0</span>
+                </div>
             </div>
-            <div id="left-tork">Left Tork: 0</div>
-            <div id="tilt-angle">
-                <span>Tilt Angle</span>
-                <span id="tilt-angle-value">0°</span>
+            <div class="seesaw-area">
+                <div class="grid"></div>
+                <div class="plank" id="plank"></div>
+                <div class="pivot"></div>
             </div>
-            <div id="right-weight">
-                <span>Right Weight</span>
-                <span id="right-weight-value">0 kg</span>
+            <div class="next-weight-box">
+                Next Weight: <span id="nextWeight">?</span> kg
             </div>
-            <div id="right-tork">Right Tork: 0</div>
-        </div> 
-        <div class="board">
+            <button id="resetBtn">Reset</button>
         </div>
-        <div class="pivot"></div>
     </div>
-    
+
     <script src="seesaw.js"></script>
 </body>
+
 </html>
