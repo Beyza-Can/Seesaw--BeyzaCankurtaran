@@ -122,3 +122,24 @@ button {
 button:hover {
     opacity: 0.85;
 }
+.bottom-area {
+    margin-top: 20px;
+}
+.log-panel {
+    margin-top: 15px;
+    background: #e5e5e5;
+    padding: 10px;
+    border-radius: 10px;
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 14px;
+}
+
+.log-item {
+    display: block;             
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    color: white;
+    font-weight: 500;
+}

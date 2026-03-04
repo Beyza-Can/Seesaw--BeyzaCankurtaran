@@ -6,7 +6,7 @@ const leftTorqueText = document.getElementById("left-tork-value");
 const rightTorqueText = document.getElementById("right-tork-value");
 const nextWeightText = document.getElementById("next-weight-value");
 const resetBtn = document.getElementById("resetBtn");
-
+const logPanel = document.getElementById("logPanel");
 const width = 400;
 const center = width / 2;
 
@@ -55,19 +55,22 @@ plank.addEventListener("click", function () {
 
   if (mousePos === null) return;
 
+  const dist = Math.abs(mousePos - center);
+  const torque= nextValue * dist;
+  const side = mousePos < center ? "Left" : "Right";
   items.push({
     weight: nextValue,
     pos: mousePos
   });
 
-  addWeight(nextValue, mousePos);
+  addWeight(nextValue, mousePos, side, torque);
 
   nextValue = randomWeight();
   update();
 });
 
 
-function addWeight(w, p) {
+function addWeight(w, p,side,t,dist) {
   const baseSize = 30;
   const sizeMultiply = 5;
   const size = baseSize + (w * sizeMultiply);
@@ -82,6 +85,19 @@ function addWeight(w, p) {
   div.style.left = (p - size / 2) + "px";
 
   plank.appendChild(div);
+  addLog(side,dist,w,t);
+}
+function addLog(side,pos,weight,torque) {
+  const logItem = document.createElement("div");
+  logItem.className = "log-item";
+  logItem.innerText = `${side} - Position: ${pos} px, Weight: ${weight} kg, Torque: ${torque} Nm`;
+  if (side === "Left") {
+    logItem.style.color = "#FF6B6B";
+  } else {
+    logItem.style.color = "#4D96FF";
+  }
+  logPanel.appendChild(logItem);
+  logPanel.scrollTop = logPanel.scrollHeight;
 }
 
 
@@ -115,9 +131,6 @@ function update() {
 
   const angle = Math.max(-30, Math.min(30, (rightT - leftT) / 10));
 
-  if (angle > 30) angle = 30;
-  if (angle < -30) angle = -30;
-
   plank.style.transform = "rotate(" + angle + "deg)";
   angleText.innerText = angle.toFixed(2);
 
@@ -136,6 +149,7 @@ resetBtn.addEventListener("click", function () {
   items = [];
   save();
   drawAll();
+   logPanel.innerHTML = "";
   nextValue = randomWeight();
   update();
 });
