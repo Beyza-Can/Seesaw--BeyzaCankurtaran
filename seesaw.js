@@ -6,23 +6,23 @@ const leftTorqueText = document.getElementById("left-tork-value");
 const rightTorqueText = document.getElementById("right-tork-value");
 const nextWeightText = document.getElementById("next-weight-value");
 const resetBtn = document.getElementById("resetBtn");
+const pauseBtn = document.getElementById("PauseBtn");
 const logPanel = document.getElementById("logPanel");
 const width = 400;
 const center = width / 2;
 const weightColors = {
-  1: "#FF6B6B", 2: "#FF9F43", 3: "#FFD93D",
-  4: "#6BCB77", 5: "#4D96FF", 6: "#9D4EDD",
-  7: "#F72585", 8: "#00C2A8", 9: "#FF595E"
+  1: "yellow", 2: "orange", 3: "red", 4: "blue", 5: "green", 6: "purple", 7: "pink", 8: "gray", 9: "brown",
 };
 
 let items = [];
+let paused = false;
 let mousePos = null;
 let nextValue = randomWeight();
 
 load();
+loadLog();
 drawAll();
 update();
-
 
 // mouse pozisyonunu al
 document.addEventListener("mousemove", function (e) {
@@ -41,26 +41,45 @@ document.addEventListener("mousemove", function (e) {
   }
 
 });
-
-
 plank.addEventListener("click", function () {
+  if (mousePos === null || paused) return;
 
-  if (mousePos === null) return;
   const newItem = {
     weight: nextValue,
     pos: mousePos
   };
 
   items.push(newItem);
-
   addWeight(newItem);
   addLog(newItem);
+  update();
+  nextValue = randomWeight();
 
+});
+resetBtn.addEventListener("click", function () {
+  items = [];
+  save();
+  saveLog();
+  drawAll();
+  logPanel.innerHTML = "";
   nextValue = randomWeight();
   update();
 });
-function addWeight(item) {
+pauseBtn.addEventListener("click", function () {
+  togglePause();
+});
+function togglePause() {
+  paused = !paused;
+  if (paused) {
+    pauseBtn.classList.add("paused");
+    pauseBtn.innerText = "Resume";
+  } else {
+    pauseBtn.classList.remove("paused");
+    pauseBtn.innerText = "Pause";
+  } 
 
+}
+function addWeight(item) {
   const baseSize = 30;
   const sizeMultiply = 2;
   const size = baseSize + (item.weight * sizeMultiply);
@@ -76,7 +95,6 @@ function addWeight(item) {
 
   plank.appendChild(div);
 }
-
 function addLog(item) {
   const dist = Math.abs(item.pos - center);
   const side = item.pos < center ? "Left" : "Right";
@@ -85,7 +103,7 @@ function addLog(item) {
   logItem.className = "log-item";
   logItem.innerText = `${side} - Position: ${dist.toFixed(0)} px, Weight: ${item.weight} kg, Torque: ${torque.toFixed(0)} Nm`;
   logItem.style.color =
-    side === "Left" ? "#FF6B6B" : "#4D96FF";
+    side === "Left" ? "red" : "blue";
   logPanel.appendChild(logItem);
   logPanel.scrollTop = logPanel.scrollHeight;
 }
@@ -122,26 +140,13 @@ function update() {
   angleText.innerText = angle.toFixed(2);
 
   save();
+  saveLog();
 }
-
-
 function randomWeight() {
   const n = Math.floor(Math.random() * 10) + 1;
-  nextWeightText.innerText = n + " kg";
+  nextWeightText.innerText = n;
   return n;
 }
-
-
-resetBtn.addEventListener("click", function () {
-  items = [];
-  save();
-  drawAll();
-  logPanel.innerHTML = "";
-  nextValue = randomWeight();
-  update();
-});
-
-
 function drawAll() {
 
   plank.innerHTML = "";
@@ -151,13 +156,18 @@ function drawAll() {
   });
 
 }
-
-
 function save() {
   localStorage.setItem("seesawState", JSON.stringify(items));
 }
-
-
+function saveLog() {
+  localStorage.setItem("seesawLog", logPanel.innerHTML);
+}
+function loadLog() {
+  const logData = localStorage.getItem("seesawLog");
+  if (logData) {
+    logPanel.innerHTML = logData;
+  }
+}
 function load() {
   const data = localStorage.getItem("seesawState");
   if (data) {
