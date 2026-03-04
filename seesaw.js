@@ -9,23 +9,15 @@ const resetBtn = document.getElementById("resetBtn");
 const logPanel = document.getElementById("logPanel");
 const width = 400;
 const center = width / 2;
+const weightColors = {
+  1: "#FF6B6B", 2: "#FF9F43", 3: "#FFD93D",
+  4: "#6BCB77", 5: "#4D96FF", 6: "#9D4EDD",
+  7: "#F72585", 8: "#00C2A8", 9: "#FF595E"
+};
 
 let items = [];
 let mousePos = null;
 let nextValue = randomWeight();
-
-const weightColors = {
-  1: "#FF6B6B",
-  2: "#FF9F43",
-  3: "#FFD93D",
-  4: "#6BCB77",
-  5: "#4D96FF",
-  6: "#9D4EDD",
-  7: "#F72585",
-  8: "#00C2A8",
-  9: "#FF595E"
-};
-
 
 load();
 drawAll();
@@ -54,54 +46,49 @@ document.addEventListener("mousemove", function (e) {
 plank.addEventListener("click", function () {
 
   if (mousePos === null) return;
-
-  const dist = Math.abs(mousePos - center);
-  const torque= nextValue * dist;
-  const side = mousePos < center ? "Left" : "Right";
-  items.push({
+  const newItem = {
     weight: nextValue,
     pos: mousePos
-  });
+  };
 
-  addWeight(nextValue, mousePos, side, torque);
+  items.push(newItem);
+
+  addWeight(newItem);
+  addLog(newItem);
 
   nextValue = randomWeight();
   update();
 });
+function addWeight(item) {
 
-
-function addWeight(w, p,side,t,dist) {
   const baseSize = 30;
-  const sizeMultiply = 5;
-  const size = baseSize + (w * sizeMultiply);
+  const sizeMultiply = 2;
+  const size = baseSize + (item.weight * sizeMultiply);
   const div = document.createElement("div");
   div.className = "weight";
-  div.innerText = w;
-  div.style.backgroundColor = weightColors[w];
+  div.innerText = item.weight;
+  div.style.backgroundColor = weightColors[item.weight];
   div.style.width = size + "px";
   div.style.height = size + "px";
   div.style.lineHeight = size + "px";
 
-  div.style.left = (p - size / 2) + "px";
+  div.style.left = (item.pos - size / 2) + "px";
 
   plank.appendChild(div);
-  addLog(side,dist,w,t);
 }
-function addLog(side,pos,weight,torque) {
+
+function addLog(item) {
+  const dist = Math.abs(item.pos - center);
+  const side = item.pos < center ? "Left" : "Right";
+  const torque = item.weight * dist;
   const logItem = document.createElement("div");
   logItem.className = "log-item";
-  logItem.innerText = `${side} - Position: ${pos} px, Weight: ${weight} kg, Torque: ${torque} Nm`;
-  if (side === "Left") {
-    logItem.style.color = "#FF6B6B";
-  } else {
-    logItem.style.color = "#4D96FF";
-  }
+  logItem.innerText = `${side} - Position: ${dist.toFixed(0)} px, Weight: ${item.weight} kg, Torque: ${torque.toFixed(0)} Nm`;
+  logItem.style.color =
+    side === "Left" ? "#FF6B6B" : "#4D96FF";
   logPanel.appendChild(logItem);
   logPanel.scrollTop = logPanel.scrollHeight;
 }
-
-
-
 function update() {
 
   let leftT = 0;
@@ -149,19 +136,20 @@ resetBtn.addEventListener("click", function () {
   items = [];
   save();
   drawAll();
-   logPanel.innerHTML = "";
+  logPanel.innerHTML = "";
   nextValue = randomWeight();
   update();
 });
 
 
 function drawAll() {
-  const old = plank.querySelectorAll(".weight");
-  old.forEach(w => w.remove());
 
-  for (let i = 0; i < items.length; i++) {
-    addWeight(items[i].weight, items[i].pos);
-  }
+  plank.innerHTML = "";
+
+  items.forEach(item => {
+    addWeight(item);
+  });
+
 }
 
 
