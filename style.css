@@ -3,6 +3,11 @@
     padding: 0;
     box-sizing: border-box;
 }
+#left-weight-value { color: #FF6B6B; font-weight: 700; }
+#right-weight-value { color: #4D96FF; font-weight: 700; }
+#tilt-angle-value { color: #FFA500; font-weight: 700; }
+#left-tork-value { color: #FF6B6B; font-weight: 600; }
+#right-tork-value { color: #4D96FF; font-weight: 600; }
 
 body {
     background: #e0dfdf;
@@ -14,7 +19,7 @@ body {
 }
 
 .container {
-    width: 820px;
+    width: 1000px;
     background: #f5f0d6;
     padding: 30px;
     border-radius: 10px;
@@ -30,19 +35,34 @@ h1 {
 }
 
 .info {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
 }
 
+.info div {
+    background: linear-gradient(145deg,#f0e7ff, #dcd1ff);
+    padding: 5px 5px;
+    border-radius: 3px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+
+}
+.info div:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
 #next-weight,
 #left-weight,
 #right-weight,
 #tilt-angle,
 #left-tork,
 #right-tork {
-    width: 25%;
+    width: 16,6%;
     background: #cbc5c5;
     padding: 20px;
     border-radius: 5px;
