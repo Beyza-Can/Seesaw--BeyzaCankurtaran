@@ -1,67 +1,141 @@
 const plank = document.getElementById("plank");
-const leftWeightEl = document.getElementById("left-weight-value");
-const rightWeightEl = document.getElementById("right-weight-value");
-const angleValueEl = document.getElementById("tilt-angle-value");
-const leftTorqueEl = document.getElementById("left-tork-value");
-const rightTorqueEl = document.getElementById("right-tork-value");
-const nextWeightEl = document.getElementById("next-weight-value");
+const leftWeightText = document.getElementById("left-weight-value");
+const rightWeightText = document.getElementById("right-weight-value");
+const angleText = document.getElementById("tilt-angle-value");
+const leftTorqueText = document.getElementById("left-tork-value");
+const rightTorqueText = document.getElementById("right-tork-value");
+const nextWeightText = document.getElementById("next-weight-value");
 const resetBtn = document.getElementById("resetBtn");
 
-const PLANK_WIDTH = 400;
-const PIVOT = PLANK_WIDTH / 2;
+const width = 400;
+const center = width / 2;
 
-let objects = [];
-let mouseX = null;       
-let nextWeight = generateNextWeight();
+let items = [];
+let mousePos = null;
+let nextValue = randomWeight();
 
-loadState();
-renderAll();
-updateSeesaw();
+load();
+drawAll();
+update();
 
-//check if mouse is over plank and update mouseX accordingly =>chatgpt
-document.addEventListener("mousemove", (e) => {
 
-  const rect = plank.getBoundingClientRect();
+// mouse pozisyonunu al
+document.addEventListener("mousemove", function(e){
 
-  if (
-    e.clientX >= rect.left &&
-    e.clientX <= rect.right &&
-    e.clientY >= rect.top &&
-    e.clientY <= rect.bottom
-  ) {
-    mouseX = e.clientX - rect.left;
-  } else {
-    mouseX = null;
+  const box = plank.getBoundingClientRect();
+
+  if(
+    e.clientX > box.left &&
+    e.clientX < box.right &&
+    e.clientY > box.top &&
+    e.clientY < box.bottom
+  ){
+    mousePos = e.clientX - box.left;
+  }else{
+    mousePos = null;
   }
 
 });
 
-//handle mouse move on plank to add weight at mouseX position
-document.addEventListener("mousemove", (e) => {
 
+plank.addEventListener("click", function(){
+
+  if(mousePos === null) return;
+
+  items.push({
+    weight: nextValue,
+    pos: mousePos
+  });
+
+  addWeight(nextValue, mousePos);
+
+  nextValue = randomWeight();
+  update();
 });
 
-//handle click on plank to add weight at mouseX position
-plank.addEventListener("click", () => {
+
+function addWeight(w, p){
+  const div = document.createElement("div");
+  div.className = "weight";
+  div.innerText = w;
+  div.style.left = (p - 12) + "px";
+  plank.appendChild(div);
+}
+
+
+function update(){
+
+  let leftT = 0;
+  let rightT = 0;
+  let leftW = 0;
+  let rightW = 0;
+
+  for(let i = 0; i < items.length; i++){
+
+    const obj = items[i];
+    const dist = Math.abs(obj.pos - center);
+
+    if(obj.pos < center){
+      leftT += obj.weight * dist;
+      leftW += obj.weight;
+    }else{
+      rightT += obj.weight * dist;
+      rightW += obj.weight;
+    }
+  }
+
+  leftWeightText.innerText = leftW + " kg";
+  rightWeightText.innerText = rightW + " kg";
+
+  leftTorqueText.innerText = Math.floor(leftT);
+  rightTorqueText.innerText = Math.floor(rightT);
+
+  let angle = (rightT - leftT) / 360;
+
+  if(angle > 30) angle = 30;
+  if(angle < -30) angle = -30;
+
+  plank.style.transform = "rotate(" + angle + "deg)";
+  angleText.innerText = angle.toFixed(2);
+
+  save();
+}
+
+
+function randomWeight(){
+  const n = Math.floor(Math.random() * 10) + 1;
+  nextWeightText.innerText = n + " kg";
+  return n;
+}
+
+
+resetBtn.addEventListener("click", function(){
+  items = [];
+  save();
+  drawAll();
+  nextValue = randomWeight();
+  update();
 });
-//handle reset button click to clear all weights and reset state
-function createWeightElement(weight, position){
-}
-//calculate total weights, torques and tilt angle, then update the display
-function updateSeesaw(){}
 
 
-function renderAll(){
-  plank.querySelectorAll(".weight").forEach(w => w.remove());
-  objects.forEach(obj => createWeightElement(obj.weight, obj.position));
-}
-function saveState(){
-  localStorage.setItem("seesawState", JSON.stringify(objects));
+function drawAll(){
+  const old = plank.querySelectorAll(".weight");
+  old.forEach(w => w.remove());
+
+  for(let i = 0; i < items.length; i++){
+    addWeight(items[i].weight, items[i].pos);
+  }
 }
 
-function loadState(){
-  const saved = localStorage.getItem("seesawState");
-  if(saved){
-    objects = JSON.parse(saved);
+
+function save(){
+  localStorage.setItem("seesawState", JSON.stringify(items));
+}
+
+
+function load(){
+  const data = localStorage.getItem("seesawState");
+  if(data){
+    items = JSON.parse(data);
   }
 }
