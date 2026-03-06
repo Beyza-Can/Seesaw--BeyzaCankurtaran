@@ -1,5 +1,6 @@
 # Seesaw Simulation Project
 LİNK: https://beyza-can.github.io/Seesaw--BeyzaCankurtaran/
+YOUTUBE LİNK:https://www.youtube.com/watch?v=84I7YSEKUpo
 
     Project Overview
 
